@@ -11,8 +11,11 @@
 
 #my_function("Emil", "Refsnes")
 
-def my_function(animal, name):
-  print("I have a", animal)
-  print("My", animal + "'s name is", name)
+#def my_function(animal, name):
+  #print("I have a", animal)
+ # print("My", animal + "'s name is", name)
 
-my_function("dog", "Buddy")
+#my_function("dog", "Buddy")
+
+x = lambda a : a + 10
+print(x(15))
