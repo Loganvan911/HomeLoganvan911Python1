@@ -17,5 +17,7 @@
 
 #my_function("dog", "Buddy")
 
-x = lambda a : a + 10
-print(x(15))
+#x = lambda a : a + 10
+#print(x(15))
+
+

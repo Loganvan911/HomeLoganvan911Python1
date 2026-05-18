@@ -24,10 +24,7 @@ for i in range(1, 101):
     name = input(f"Введи ім'я учасника {i}: ")
     participants.append(name)
 
-winner = random.choice(participants)
+winner = random.choice(names)
 
 print("\nПереможець:")
 print(winner)
-
-winner = random.choice(names)
-print("Випадково обране ім’я:", winner)
