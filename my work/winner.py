@@ -1,30 +1,27 @@
 import random
 
-participants = ["Іван", "Петро", "Олександр", "Микола", "Андрій",
-    "Василь", "Дмитро", "Сергій", "Олег", "Юрій",
-    "Володимир", "Максим", "Роман", "Богдан", "Тарас",
-    "Артем", "Віталій", "Руслан", "Євген", "Степан",
-    "Марія", "Олена", "Анна", "Ірина", "Наталія",
-    "Тетяна", "Катерина", "Юлія", "Оксана", "Людмила",
-    "Софія", "Дарина", "Вікторія", "Аліна", "Поліна",
-    "Христина", "Зоряна", "Марта", "Соломія", "Вероніка",
-    "Денис", "Ігор", "Павло", "Ярослав", "Лев",
-    "Кирило", "Матвій", "Тимофій", "Ростислав", "Захар",
-    "Анастасія", "Валерія", "Єва", "Емілія", "Мілана",
-    "Арсен", "Назар", "Давид", "Гліб", "Марк",
-    "Едуард", "Станіслав", "Владислав", "Антон", "Ілля",
-    "Світлана", "Ніна", "Галина", "Алла", "Любов",
-    "Уляна", "Лілія", "Каріна", "Еліна", "Мирослава",
-    "Остап", "Мирослав", "Орест", "Святослав", "Любомир",
-    "Адам", "Лука", "Михайло", "Валентин", "Георгій",
-    "Злата", "Ангеліна", "Кіра", "Діана", "Меланія",
-    "Яна", "Інна", "Таїсія", "Елеонора", "Богдана"]
+txt = ["Ivan", "Petro", "Oleksandr", "Mykola", "Andrii",
+    "Vasyl", "Dmytro", "Serhii", "Oleh", "Yurii",
+    "Volodymyr", "Maksym", "Roman", "Bohdan", "Taras",
+    "Artem", "Vitalii", "Ruslan", "Yevhen", "Stepan",
+    "Mariia", "Olena", "Anna", "Iryna", "Nataliia",
+    "Tetiana", "Kateryna", "Yuliia", "Oksana", "Liudmyla",
+    "Sofiia", "Daryna", "Viktoriia", "Alina", "Polina",
+    "Khrystyna", "Zoriana", "Marta", "Solomiia", "Veronika",
+    "Denys", "Ihor", "Anastasiia", "Valeriia", "Yeva",
+    "Emiliia", "Milana", "Arsen", "Nazar","Davyd",
+   "Hlib","Mark","Eduard","Stanislav","Vladyslav",
+    "Anton", "Illia", "Svitlana", "Nina", "Halyna",
+    "Alla", "Liubov", "Uliana", "Liliia", "Karina",
+    "Elina", "Myroslava", "Ostap", "Myroslav", "Orest",
+    "Sviatoslav", "Liubomyr", "Adam", "Luka", "Mykhailo",
+    "Valentyn", "Heorhii", "Zlata", "Anhelina", "Kira",
+    "Diana", "Melaniia", "Yana", "Inna", "Taisiia",
+    "Eleonora", "Bohdana"]
 
-for i in range(1, 101):
-    name = input(f"Введи ім'я учасника {i}: ")
-    participants.append(name)
+for i in range(10):
+    winner = random.choice(txt)
 
-winner = random.choice(names)
+winner = random.choice(txt)
 
-print("\nПереможець:")
-print(winner)
+print("Winner:", winner)
