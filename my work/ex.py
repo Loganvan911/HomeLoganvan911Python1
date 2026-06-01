@@ -45,30 +45,35 @@
 
 # operation(a, b, operator)
 
-def my_oper(a, b, operator):
-    if operator == 1:
-        return a + b
-    elif operator == 2:
-        return a - b
-    elif operator == 3:
-        return a * b
-    elif operator == 4:
-        return a / b
-    elif operator == 5:
-        return a ** b
-    elif operator == 6: 
-        return a % b
-    else: 
-        return "There is not operation"
+# def my_oper(a, b, operator):
+#     if operator == 1:
+#         return a + b
+#     elif operator == 2:
+#         return a - b
+#     elif operator == 3:
+#         return a * b
+#     elif operator == 4:
+#         return a / b
+#     elif operator == 5:
+#         return a ** b
+#     elif operator == 6: 
+#         return a % b
+#     else: 
+#         return "There is not operation"
 
-num1 = int(input("Введіть перше число: "))
-num2 = int(input("Введіть друге число: "))
-operator = int(input("Виберіть операцію (1-6): "))
-result = my_oper(num1, num2, operator)
-print("Результат:", result)
+# num1 = int(input("Введіть перше число: "))
+# num2 = int(input("Введіть друге число: "))
+# operator = int(input("Виберіть операцію (1-6): "))
+# result = my_oper(num1, num2, operator)
+# print("Результат:", result)
 
+# def say_hello():
+#     return "Hello"
 
+# result = say_hello() + " Gays"
+# print(result)
 
+# # print(say_hello())
 
 
 
