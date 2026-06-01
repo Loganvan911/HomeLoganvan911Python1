@@ -56,8 +56,6 @@
 #         return a / b
 #     elif operator == 5:
 #         return a ** b
-#     elif operator == 6: 
-#         return a % b
 #     else: 
 #         return "There is not operation"
 
@@ -74,6 +72,9 @@
 # print(result)
 
 # # print(say_hello())
+
+
+
 
 
 
