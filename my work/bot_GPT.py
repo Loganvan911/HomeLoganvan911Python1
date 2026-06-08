@@ -10,7 +10,7 @@ except ImportError:
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 if genai and GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+    # genai.configure(api_key=GEMINI_API_KEY)  треба додати ключ API для роботи з Gemini, але це не обов'язково, оскільки бібліотека може автоматично використовувати змінну середовища
 
 
 def ask_ai(prompt: str) -> str:
