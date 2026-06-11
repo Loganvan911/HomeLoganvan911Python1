@@ -53,13 +53,13 @@ class TankChatBot:
             # Якщо бібліотека не встановлена — пропускаємо
             return
 
-        # Отримуємо API ключ: спочатку з змінної середовища, потім з константи
-        # РЕКОМЕНДОВАНО: встановіть змінну середовища GEMINI_API_KEY
+        # Отримуємо API ключ з змінної середовища
+        # РЕКОМЕНДОВАНО: встановіть змінну середовища GEMINI_API_KEY перед запуском
         # Команда в терміналі (Windows): set GEMINI_API_KEY=ваш_ключ
         # Команда в терміналі (Mac/Linux): export GEMINI_API_KEY=ваш_ключ
-        api_key = os.environ.get("GEMINI_API_KEY", "ВАШ_КЛЮЧ_GEMINI_API_ТУТ")
+        api_key = os.environ.get("GEMINI_API_KEY", "").strip()
 
-        if api_key == "ВАШ_КЛЮЧ_GEMINI_API_ТУТ":
+        if not api_key or api_key == "":
             # Ключ не замінено — AI не буде працювати
             self.model = None
             return
@@ -389,10 +389,14 @@ class TankChatBot:
         self.append_to_chat("👤 Ти: ", "user_name")             # Ім'я
         self.append_to_chat(f"{user_text}\n", "user_msg")       # Текст
 
+        # Показуємо заголовок відповіді бота заздалегідь
+        self.append_to_chat(f"\n[{now}] ", "time_tag")
+        self.append_to_chat("🤖 Бот: ", "bot_name")
+
         # Блокуємо кнопку та поле вводу, поки бот "думає"
-        self.send_button.configure(state=tk.DISABLED, text="⏳ Думаю...")
+        self.send_button.configure(state=tk.DISABLED, text="⏳ Генерую...")
         self.input_field.configure(state=tk.DISABLED)
-        self.status_bar.configure(text="🤖 Генерую відповідь...")
+        self.status_bar.configure(text="🤖 Отримую відповідь від Gemini...")
 
         # Запускаємо отримання відповіді у ФОНОВОМУ ПОТОЦІ
         # Це критично важливо! Без threading — GUI зависне поки AI думає
@@ -410,36 +414,80 @@ class TankChatBot:
     def get_ai_response(self, user_text):
         try:
             if self.model and self.chat_session:
-                # === РЕЖИМ GEMINI AI ===
-                # Надсилаємо повідомлення в активну сесію чату
-                # chat_session автоматично зберігає всю попередню історію
-                response = self.chat_session.send_message(user_text)
-                answer = response.text                  # Отримуємо текст відповіді
+                # === РЕЖИМ GEMINI AI З ПОТОКОВОЮ ГЕНЕРАЦІЄЮ ===
+                # stream=True — отримуємо текст по частинах, не чекаючи на всю відповідь
+                response = self.chat_session.send_message(user_text, stream=True)
+                
+                # Накопичуємо весь текст з потоку
+                answer = ""
+                for chunk in response:
+                    if chunk.text:
+                        answer += chunk.text
+                        # Оновлюємо GUI на льоту — показуємо текст при надходженні
+                        self.root.after(0, self.append_streaming_chunk, chunk.text)
             else:
                 # === ЛОКАЛЬНИЙ РЕЖИМ (без AI) ===
                 answer = self.get_local_response(user_text)   # Шукаємо у локальній базі
+                # У локальному режимі показуємо всю відповідь разом
+                self.root.after(0, self.display_response, answer)
+                return
 
         except Exception as e:
-            # Обробка помилок API (ліміт запитів, проблеми мережі тощо)
+            # Обробка помилок API (ліміт запитів, проблеми мережи тощо)
             answer = f"⚠️ Помилка: {str(e)}\nСпробуй ще раз або перевір API ключ."
+            self.root.after(0, self.display_response, answer)
+            return
 
-        # Оновлення GUI має відбуватись у ГОЛОВНОМУ потоці!
-        # after(0, ...) — планує виконання функції в головному потоці (thread-safe спосіб)
-        self.root.after(0, self.display_response, answer)
+        # Після завершення потоку — показуємо завершення
+        self.root.after(0, self.finalize_streaming)
+
+
+    # --------------------------------------------------------
+    # МЕТОД: Додати кусок текста при потоковій генерації
+    # --------------------------------------------------------
+    def append_streaming_chunk(self, chunk):
+        """Додавати текст поступово при надходженні від API"""
+        self.chat_display.configure(state=tk.NORMAL)
+        self.chat_display.insert(tk.END, chunk, "bot_msg")
+        self.chat_display.configure(state=tk.DISABLED)
+        self.chat_display.see(tk.END)  # Автоматично прокручуємо вниз
+
+
+    # --------------------------------------------------------
+    # МЕТОД: Завершити потокову генерацію і розблокувати UI
+    # --------------------------------------------------------
+    def finalize_streaming(self):
+        """Завершити отримання відповіді і повернути контроль користувачу"""
+        self.chat_display.configure(state=tk.NORMAL)
+        self.chat_display.insert(tk.END, "\n", "bot_msg")
+        self.chat_display.insert(tk.END, "─" * 58 + "\n", "separator")
+        self.chat_display.configure(state=tk.DISABLED)
+
+        # Розблоковуємо кнопку та поле вводу
+        self.send_button.configure(state=tk.NORMAL, text="📨 Надіслати")
+        self.input_field.configure(state=tk.NORMAL)
+        self.input_field.focus_set()
+
+        # Оновлюємо статус-бар
+        self.status_bar.configure(text="Готовий | Введіть наступне питання")
 
 
     # --------------------------------------------------------
     # МЕТОД: Відобразити відповідь бота в чаті
-    # (завжди викликається з головного потоку через root.after)
+    # (для локального режиму без AI)
     # --------------------------------------------------------
     def display_response(self, answer):
+        """Показати повну відповідь (для локального режиму)"""
         now = datetime.datetime.now().strftime("%H:%M")   # Поточний час
 
         # Відображаємо відповідь бота
-        self.append_to_chat(f"\n[{now}] ", "time_tag")
-        self.append_to_chat("🤖 Бот: ", "bot_name")
-        self.append_to_chat(f"{answer}\n", "bot_msg")
-        self.append_to_chat("─" * 58 + "\n", "separator")  # Роздільник між діалогами
+        self.chat_display.configure(state=tk.NORMAL)
+        self.chat_display.insert(tk.END, f"\n[{now}] ", "time_tag")
+        self.chat_display.insert(tk.END, "🤖 Бот: ", "bot_name")
+        self.chat_display.insert(tk.END, f"{answer}\n", "bot_msg")
+        self.chat_display.insert(tk.END, "─" * 58 + "\n", "separator")
+        self.chat_display.configure(state=tk.DISABLED)
+        self.chat_display.see(tk.END)
 
         # Розблоковуємо кнопку та поле вводу
         self.send_button.configure(state=tk.NORMAL, text="📨 Надіслати")
