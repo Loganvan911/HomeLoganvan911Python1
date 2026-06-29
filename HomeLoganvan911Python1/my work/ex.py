@@ -278,13 +278,20 @@
 # recon_drone.move()
 # end of Exercise 8.
 
-# exercise 9
+# Класна робота 26.06.26
 
+# import greeting 
 
+# greeting.greeting("Jone")
+# print ("")
 
+a = 10
 
+b = 20
 
+c = a + b
 
-
-
+d = c + a + b
+print(a, b, c, d)
+print()
 
